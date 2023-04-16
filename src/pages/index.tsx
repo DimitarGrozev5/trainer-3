@@ -56,7 +56,10 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+// export default Home;
+export default function HomePage() {
+  return <>Home page</>;
+}
 
 const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();
