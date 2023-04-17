@@ -1,10 +1,13 @@
 import { motion, motionValue, useTransform } from "framer-motion";
+import { useEffect } from "react";
 
 type Props = {
   scrollProgress: number;
+  setScroll: (progress: number) => void;
+  isTouching: boolean;
 };
 
-const Header: React.FC<Props> = ({ scrollProgress }) => {
+const Header: React.FC<Props> = ({ scrollProgress, setScroll, isTouching }) => {
   const headerHeight = useTransform(
     motionValue(scrollProgress),
     [0, 0.35],
@@ -28,6 +31,17 @@ const Header: React.FC<Props> = ({ scrollProgress }) => {
     [0.18, 0.35],
     [0, 1]
   );
+
+  // Reset scroll position when the user stop scrolling
+  useEffect(() => {
+    if (!isTouching) {
+      if (scrollProgress <= 0.17) {
+        setScroll(0);
+      } else if (scrollProgress > 0.17 && scrollProgress < 0.35) {
+        setScroll(0.35);
+      }
+    }
+  }, [isTouching, scrollProgress, setScroll]);
 
   return (
     <motion.header
