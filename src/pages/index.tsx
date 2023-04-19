@@ -1,9 +1,59 @@
-import { type NextPage } from "next";
+import {
+  type InferGetServerSidePropsType,
+  type GetServerSidePropsContext,
+  type NextPage,
+} from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { getProviders, signIn, signOut, useSession } from "next-auth/react";
 
 import { api } from "~/utils/api";
+import { getServerSession } from "next-auth";
+import { authOptions } from "~/server/auth";
+import Card from "~/components/layout/card";
+
+export default function HomePage({
+  providers,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  return (
+    <>
+      <Card>
+        <h2 className="text-center text-2xl font-bold text-gray-800">
+          Sign in or Register
+        </h2>
+      </Card>
+      <Card>
+        Wellcome to your personal trainer. You need to login to start your
+        practice.
+      </Card>
+      <Card>
+        {Object.values(providers).map((provider) => (
+          <button
+            key={provider.name}
+            onClick={() => void signIn(provider.id)}
+            className="w-full rounded-full border border-gray-400 bg-gray-200 p-2.5 pl-6 pr-6 text-gray-700"
+          >
+            Sign in with {provider.name}
+          </button>
+        ))}
+      </Card>
+    </>
+  );
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session = await getServerSession(context.req, context.res, authOptions);
+
+  if (session) {
+    return { redirect: { destination: "/schedule" } };
+  }
+
+  const providers = await getProviders();
+
+  return {
+    props: { providers: providers ?? [] },
+  };
+}
 
 const Home: NextPage = () => {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
@@ -57,9 +107,6 @@ const Home: NextPage = () => {
 };
 
 // export default Home;
-export default function HomePage() {
-  return <>Home page</>;
-}
 
 const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();

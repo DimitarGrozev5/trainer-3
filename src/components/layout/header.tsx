@@ -32,7 +32,7 @@ const Header: React.FC<Props> = ({ scrollProgress, setScroll, isTouching }) => {
     [0, 1]
   );
 
-  // Reset scroll position when the user stop scrolling
+  // Reset scroll position when the user stops scrolling
   useEffect(() => {
     if (!isTouching) {
       if (scrollProgress <= 0.17) {
