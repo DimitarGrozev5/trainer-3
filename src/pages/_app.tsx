@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-
 import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import "~/styles/globals.css";
+import { SSRProvider } from "@react-aria/ssr";
 
 import { api } from "~/utils/api";
 
@@ -18,20 +17,27 @@ const MyApp: AppType<{ session: Session | null }> = ({
 
   return (
     <SessionProvider session={session}>
-      <div
-        ref={containerRef}
-        className="fixed bottom-0 left-0 right-0 top-0 overflow-auto bg-gray-100"
-      >
-        <Header
-          containerRef={containerRef}
-          addSnapRequest={addSnapRequest}
-          removeSnapRequest={removeSnapRequest}
-        />
+      <SSRProvider>
+        <div
+          ref={containerRef}
+          className="fixed bottom-0 left-0 right-0 top-0 overflow-auto scroll-smooth bg-gray-100"
+        >
+          <Header
+            containerRef={containerRef}
+            addSnapRequest={addSnapRequest}
+            removeSnapRequest={removeSnapRequest}
+          />
 
-        <main className="flex min-h-screen flex-col items-stretch gap-4 overflow-y-auto p-4">
-          <Component {...pageProps} />
-        </main>
-      </div>
+          <main className="flex min-h-screen flex-col items-stretch gap-4 overflow-y-auto px-4">
+            <Component
+              {...pageProps}
+              containerRef={containerRef}
+              addSnapRequest={addSnapRequest}
+              removeSnapRequest={removeSnapRequest}
+            />
+          </main>
+        </div>
+      </SSRProvider>
     </SessionProvider>
   );
 };

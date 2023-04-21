@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 type ScrollSnap = {
   id: string;
   test: () => boolean;
-  to: number;
+  to: () => number;
 };
 
 export const useGlobalScroll = () => {
@@ -20,11 +20,8 @@ export const useGlobalScroll = () => {
   // Function to animate scrolling
   const scrollTo = useCallback(
     (position: number) => {
-      if (!scrollLocked) {
-        containerRef.current?.scrollTo({
-          top: position,
-          behavior: "smooth",
-        });
+      if (!scrollLocked && containerRef.current) {
+        containerRef.current.scrollTop = position;
       }
     },
     [scrollLocked]
@@ -75,7 +72,7 @@ export const useGlobalScroll = () => {
 
   // Add scroll snap request
   const addSnapRequest = useCallback(
-    (id: string, test: () => boolean, to: number) => {
+    (id: string, test: () => boolean, to: () => number) => {
       setSnapRequests((prev) => [...prev, { id, test, to }]);
     },
     []
@@ -89,7 +86,7 @@ export const useGlobalScroll = () => {
     if (!scrollLocked) {
       snapRequests.forEach((snap) => {
         if (snap.test()) {
-          scrollTo(snap.to);
+          scrollTo(snap.to());
         }
       });
     }

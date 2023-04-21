@@ -45,8 +45,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getServerSession(context.req, context.res, authOptions);
 
   if (session) {
-    return { redirect: { destination: "/schedule" } };
+    console.log(session);
+    return {
+      redirect: { destination: "/schedule", permanent: false },
+    };
   }
+
+  console.log("continue");
 
   const providers = await getProviders();
 

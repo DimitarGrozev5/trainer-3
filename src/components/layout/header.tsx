@@ -6,7 +6,7 @@ import { useId } from "react-aria";
 
 type Props = {
   containerRef: React.RefObject<HTMLDivElement>;
-  addSnapRequest: (id: string, test: () => boolean, to: number) => void;
+  addSnapRequest: (id: string, test: () => boolean, to: () => number) => void;
   removeSnapRequest: (id: string) => void;
 };
 
@@ -64,16 +64,27 @@ const Header: React.FC<Props> = ({
     });
   }, [h2Scroll]);
 
+  // Setup margin bellow the header, to prevent content from being hidden bellow the fixed div
+  const headerMargin = useTransform(h2Scroll, [0, 1], ["0rem", "3rem"]);
+
   // Setup header snapping
   useEffect(() => {
-    const to = (() => {
+    const to = () => {
       if (!headerRef.current) return 0;
       const headerRect = headerRef.current.getBoundingClientRect();
       return headerRect.height;
-    })();
+    };
 
-    addSnapRequest(headerId, () => headerScroll.get() < 0.5, 0);
-    addSnapRequest(headerId, () => headerScroll.get() >= 0.5, to);
+    addSnapRequest(
+      headerId,
+      () => headerScroll.get() > 0 && headerScroll.get() < 0.5,
+      () => 0
+    );
+    addSnapRequest(
+      headerId,
+      () => headerScroll.get() >= 0.5 && headerScroll.get() < 1,
+      to
+    );
 
     return () => {
       removeSnapRequest(headerId);
@@ -83,8 +94,8 @@ const Header: React.FC<Props> = ({
   return (
     <motion.header
       ref={headerRef}
-      className="flex flex-col items-stretch justify-center"
-      style={{ height: "40vh" }}
+      className="z-50 flex flex-col items-stretch justify-center"
+      style={{ height: "40vh", marginBottom: headerMargin }}
     >
       <motion.h1
         className="flex flex-1 items-center justify-center text-4xl font-bold text-gray-900"
@@ -107,7 +118,7 @@ const Header: React.FC<Props> = ({
       </div>
 
       <div
-        className="fixed left-0 right-0 top-0 flex items-center justify-between bg-gray-100"
+        className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between bg-gray-100"
         style={{ visibility: h2Visibility }}
       >
         <h2 className="flex-1 p-2 text-2xl font-bold text-gray-900">Trainer</h2>
