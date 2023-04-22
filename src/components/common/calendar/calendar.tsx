@@ -12,7 +12,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 import CalendarGrid from "./calendar-grid";
-import Button from "../buttons/button";
+import Button from "~/components/layout/buttons/button";
 
 function Calendar(props: AriaCalendarProps<DateValue>) {
   const { locale } = useLocale();

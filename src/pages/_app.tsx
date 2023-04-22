@@ -6,7 +6,7 @@ import { SSRProvider } from "@react-aria/ssr";
 
 import { api } from "~/utils/api";
 
-import Header from "~/components/layout/header";
+import Header from "~/components/layout/header/header";
 import { useGlobalScroll } from "~/hooks/useGlobalScroll";
 
 const MyApp: AppType<{ session: Session | null }> = ({

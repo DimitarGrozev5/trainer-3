@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useId } from "react-aria";
+import { useSession } from "next-auth/react";
+import MenuButton from "./menu-button";
 
 type Props = {
   containerRef: React.RefObject<HTMLDivElement>;
@@ -15,6 +16,8 @@ const Header: React.FC<Props> = ({
   addSnapRequest,
   removeSnapRequest,
 }) => {
+  const { data: signedIn } = useSession();
+
   const headerId = useId();
   const headerRef = useRef<HTMLHeadingElement | null>(null);
 
@@ -91,6 +94,8 @@ const Header: React.FC<Props> = ({
     };
   }, [addSnapRequest, headerId, headerScroll, removeSnapRequest]);
 
+  // Setup options menu
+
   return (
     <motion.header
       ref={headerRef}
@@ -112,9 +117,11 @@ const Header: React.FC<Props> = ({
         >
           Trainer
         </motion.h2>
-        <button className="mr-4 cursor-default rounded-full active:ring-2 active:ring-gray-300">
-          <MoreVertIcon sx={{ fontSize: "1.8rem" }} />
-        </button>
+        {signedIn && (
+          <MenuButton>
+            <>test</>
+          </MenuButton>
+        )}
       </div>
 
       <div
@@ -122,9 +129,7 @@ const Header: React.FC<Props> = ({
         style={{ visibility: h2Visibility }}
       >
         <h2 className="flex-1 p-2 text-2xl font-bold text-gray-900">Trainer</h2>
-        <button className="mr-4 cursor-default rounded-full active:ring-2 active:ring-gray-300">
-          <MoreVertIcon sx={{ fontSize: "1.8rem" }} />
-        </button>
+        {/* {signedIn && <MenuButton />} */}
       </div>
     </motion.header>
   );
